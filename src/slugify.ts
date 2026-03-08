@@ -6,7 +6,7 @@ type SlugInput = string | number | null | undefined;
 /**
  * Default options for slug generation.
  */
-const DEFAULT_OPTIONS = {
+const DEFAULT_OPTIONS: Required<SlugOptions> = {
   separator: "-",
   maxLength: undefined,
   lowercase: true,
@@ -39,7 +39,7 @@ const NON_ALPHANUMERIC_REGEX = /[^\p{L}\p{N}]+/gu;
  * slugify("  --test--  "); // "test"
  */
 export function slugify(input: SlugInput, options: SlugOptions = {}): string {
-  const config = { ...DEFAULT_OPTIONS, ...options };
+  const config: Required<SlugOptions> = { ...DEFAULT_OPTIONS, ...options };
 
   // Step 1: Coerce input to string
   let slug = coerceToString(input);

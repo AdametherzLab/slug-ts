@@ -26,4 +26,19 @@ describe("slugify", () => {
     const result = slugify("hello world foo bar", { maxLength: 12 });
     expect(result).toBe("hello-world");
   });
+
+  it("keeps case when lowercase option is false", () => {
+    const result = slugify("Hello World", { lowercase: false });
+    expect(result).toBe("Hello-World");
+  });
+
+  it("keeps case and respects transliteration when lowercase is false", () => {
+    const result = slugify("Café Résumé", { lowercase: false });
+    expect(result).toBe("Cafe-Resume");
+  });
+
+  it("keeps case and respects custom separator when lowercase is false", () => {
+    const result = slugify("My Awesome Title", { lowercase: false, separator: "_" });
+    expect(result).toBe("My_Awesome_Title");
+  });
 });
