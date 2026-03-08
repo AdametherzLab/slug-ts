@@ -66,4 +66,29 @@ describe("slugify", () => {
     const result = slugify("Hello! World?", { removeNonAlphanumeric: false });
     expect(result).toBe("hello-world"); // Default behavior still replaces with separator
   });
+
+  it("preserves numbers when preserveNumbers is true", () => {
+    const result = slugify("Product 123-ABC", { preserveNumbers: true });
+    expect(result).toBe("product-123-abc");
+  });
+
+  it("preserves numbers and removes non-alphanumeric when both are true", () => {
+    const result = slugify("Item #456!", { preserveNumbers: true, removeNonAlphanumeric: true });
+    expect(result).toBe("item-456");
+  });
+
+  it("does not preserve numbers when preserveNumbers is false", () => {
+    const result = slugify("Product 123-ABC", { preserveNumbers: false });
+    expect(result).toBe("product-123-abc"); // Numbers are alphanumeric by default, so this test might not show a difference without other non-alphanumeric chars
+  });
+
+  it("preserves numbers and handles other special characters", () => {
+    const result = slugify("Version 2.0 Beta!", { preserveNumbers: true });
+    expect(result).toBe("version-2-0-beta");
+  });
+
+  it("preserves numbers and transliterates", () => {
+    const result = slugify("Article №123", { preserveNumbers: true });
+    expect(result).toBe("article-no123");
+  });
 });

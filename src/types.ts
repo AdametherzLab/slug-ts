@@ -61,4 +61,11 @@ export interface SlugOptions {
    * @default false
    */
   readonly removeNonAlphanumeric?: boolean;
+
+  /**
+   * Whether to preserve numbers in the slug. If `false`, numbers will be treated as
+   * non-alphanumeric characters and replaced by the separator or removed based on other options.
+   * @default true
+   */
+  readonly preserveNumbers?: boolean;
 }

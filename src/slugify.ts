@@ -15,17 +15,13 @@ const DEFAULT_OPTIONS: Required<SlugOptions> = {
   transliterationMap: {},
   preserveAccents: false,
   removeNonAlphanumeric: false,
+  preserveNumbers: true,
 };
 
 /**
  * Regular expression to match combining diacritical marks (Unicode category Mn).
  */
 const DIACRITIC_REGEX = /\p{Mn}/gu;
-
-/**
- * Regular expression to match characters that are not unicode letters or numbers.
- */
-const NON_ALPHANUMERIC_REGEX = /[^\p{L}\p{N}]+/gu;
 
 /**
  * Core slugification engine.
@@ -52,23 +48,34 @@ export function slugify(input: SlugInput, options: SlugOptions = {}): string {
   slug = normalizeAndStripDiacritics(slug, config.preserveAccents);
 
   // Step 4: Replace non-alphanumeric characters with separator or remove them
-  if (config.removeNonAlphanumeric) {
-    slug = slug.replace(NON_ALPHANUMERIC_REGEX, config.separator);
+  let nonAlphanumericRegex: RegExp;
+  if (config.preserveNumbers) {
+    // Match anything that is NOT a letter, number, or the separator
+    const separatorPattern = config.separator.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    nonAlphanumericRegex = new RegExp(`[^\p{L}\p{N}${separatorPattern}]+`, "gu");
   } else {
-    // Original behavior: replace non-alphanumeric with separator
-    slug = slug.replace(NON_ALPHANUMERIC_REGEX, config.separator);
+    // Match anything that is NOT a letter
+    nonAlphanumericRegex = /[^\p{L}]+/gu;
+  }
+
+  if (config.removeNonAlphanumeric) {
+    // If removeNonAlphanumeric is true, replace matched characters with empty string
+    slug = slug.replace(nonAlphanumericRegex, "");
+  } else {
+    // Otherwise, replace matched characters with the separator
+    slug = slug.replace(nonAlphanumericRegex, config.separator);
   }
 
   // Step 5: Collapse consecutive separators into one
-  const collapseRegex = new RegExp(`\\${config.separator}+`, "g");
+  const collapseRegex = new RegExp(`\${config.separator}+`, "g");
   slug = slug.replace(collapseRegex, config.separator);
 
   // Step 6: Trim leading/trailing separators
   if (config.trimLeading) {
-    slug = slug.replace(new RegExp(`^\\${config.separator}+`), "");
+    slug = slug.replace(new RegExp(`^\${config.separator}+`), "");
   }
   if (config.trimTrailing) {
-    slug = slug.replace(new RegExp(`\\${config.separator}+$`), "");
+    slug = slug.replace(new RegExp(`\${config.separator}+$`), "");
   }
 
   // Step 7: Optionally lowercase
