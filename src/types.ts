@@ -53,4 +53,12 @@ export interface SlugOptions {
    * @default false
    */
   readonly preserveAccents?: boolean;
+
+  /**
+   * Whether to remove non-alphanumeric characters entirely instead of replacing them with the separator.
+   * If `true`, `Hello! World?` becomes `hello-world` (assuming default separator).
+   * This option takes precedence over `separator` for non-alphanumeric characters.
+   * @default false
+   */
+  readonly removeNonAlphanumeric?: boolean;
 }

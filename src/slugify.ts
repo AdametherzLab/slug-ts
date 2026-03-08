@@ -14,6 +14,7 @@ const DEFAULT_OPTIONS: Required<SlugOptions> = {
   trimTrailing: true,
   transliterationMap: {},
   preserveAccents: false,
+  removeNonAlphanumeric: false,
 };
 
 /**
@@ -50,8 +51,13 @@ export function slugify(input: SlugInput, options: SlugOptions = {}): string {
   // Step 3: Normalize unicode and strip diacritics
   slug = normalizeAndStripDiacritics(slug, config.preserveAccents);
 
-  // Step 4: Replace non-alphanumeric characters with separator
-  slug = slug.replace(NON_ALPHANUMERIC_REGEX, config.separator);
+  // Step 4: Replace non-alphanumeric characters with separator or remove them
+  if (config.removeNonAlphanumeric) {
+    slug = slug.replace(NON_ALPHANUMERIC_REGEX, config.separator);
+  } else {
+    // Original behavior: replace non-alphanumeric with separator
+    slug = slug.replace(NON_ALPHANUMERIC_REGEX, config.separator);
+  }
 
   // Step 5: Collapse consecutive separators into one
   const collapseRegex = new RegExp(`\\${config.separator}+`, "g");

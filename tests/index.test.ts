@@ -41,4 +41,29 @@ describe("slugify", () => {
     const result = slugify("My Awesome Title", { lowercase: false, separator: "_" });
     expect(result).toBe("My_Awesome_Title");
   });
+
+  it("removes non-alphanumeric characters entirely when removeNonAlphanumeric is true", () => {
+    const result = slugify("Hello! World? 123.", { removeNonAlphanumeric: true });
+    expect(result).toBe("hello-world-123");
+  });
+
+  it("removes non-alphanumeric characters entirely and preserves case", () => {
+    const result = slugify("Hello! World? 123.", { removeNonAlphanumeric: true, lowercase: false });
+    expect(result).toBe("Hello-World-123");
+  });
+
+  it("removes non-alphanumeric characters entirely and uses custom separator", () => {
+    const result = slugify("Hello! World? 123.", { removeNonAlphanumeric: true, separator: "_" });
+    expect(result).toBe("hello_world_123");
+  });
+
+  it("handles mixed characters with removeNonAlphanumeric", () => {
+    const result = slugify("Café! Résumé? Привет мир!", { removeNonAlphanumeric: true });
+    expect(result).toBe("cafe-resume-privet-mir");
+  });
+
+  it("does not remove non-alphanumeric characters when removeNonAlphanumeric is false", () => {
+    const result = slugify("Hello! World?", { removeNonAlphanumeric: false });
+    expect(result).toBe("hello-world"); // Default behavior still replaces with separator
+  });
 });
